@@ -10,7 +10,7 @@ module AsyncJob
       raise NotImplementedError
     end
 
-    def fetch
+    def fetch(*)
       raise NotImplementedError
     end
   end
