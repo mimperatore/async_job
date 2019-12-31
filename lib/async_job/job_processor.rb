@@ -6,9 +6,9 @@ module AsyncJob
       @jobstore = jobstore
     end
 
-    def run(wait: false)
+    def run(**options)
       loop do
-        async_job = @jobstore.fetch(wait: wait)
+        async_job = @jobstore.fetch(options)
         async_job ? async_job.perform : break
       end
     end
