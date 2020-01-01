@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module AsyncJob
-  RSpec.describe AsyncJob do
+  RSpec.describe Job do
     let(:worker_class) do
       Class.new do
         include Worker
@@ -122,8 +122,8 @@ module AsyncJob
     end
 
     describe '.json_create' do
-      it 'returns an AsyncJob from the specified hash' do
-        expect(AsyncJob.json_create(JSON.parse(subject.to_json))).to eq(subject)
+      it 'returns a Job from the specified hash' do
+        expect(Job.json_create(JSON.parse(subject.to_json))).to eq(subject)
       end
     end
 

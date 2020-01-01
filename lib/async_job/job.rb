@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 module AsyncJob
-  class AsyncJob
+  class Job
     attr_reader :worker_class_name, :args, :start_at, :jobstore, :uuid
 
     def initialize(
       worker_class_name:,
       args:,
       start_at: Time.now,
-      jobstore: AsyncJob.send(:default_jobstore, worker_class_name)
+      jobstore: Job.send(:default_jobstore, worker_class_name)
     )
       @worker_class_name = worker_class_name
       @args = args

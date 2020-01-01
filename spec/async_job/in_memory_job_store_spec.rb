@@ -26,9 +26,9 @@ module AsyncJob
 
     describe '#enqueue' do
       it 'enqueues the specifiec jobs' do
-        job1 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 3)
-        job2 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 1)
-        job3 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 2)
+        job1 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 3)
+        job2 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 1)
+        job3 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 2)
         subject.enqueue(job1)
         subject.enqueue(job2)
         subject.enqueue(job3)
@@ -38,9 +38,9 @@ module AsyncJob
 
     describe '#dequeue' do
       it 'dequeues the specified jobs' do
-        job1 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 3)
-        job2 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 1)
-        job3 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 2)
+        job1 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 3)
+        job2 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 1)
+        job3 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 2)
         subject.enqueue(job1)
         subject.enqueue(job2)
         subject.enqueue(job3)
@@ -67,7 +67,7 @@ module AsyncJob
 
       context 'wait: true' do
         it "waits until start_at (+/- the specified delay:), if the next job's start_at is in the future" do
-          job1 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 0.25)
+          job1 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 0.25)
           Timecop.travel(now)
           subject.enqueue(job1)
           expect(subject.fetch(wait: true, delay: 0.1)).to eq(job1)
@@ -77,13 +77,13 @@ module AsyncJob
 
       context 'wait: false' do
         it "returns nil if the next job's start_at is in the future" do
-          job1 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 0.001)
+          job1 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 0.001)
           subject.enqueue(job1)
           expect(subject.fetch(wait: false)).to be_nil
         end
 
         it 'returns the next job when the appropriate time has come' do
-          job1 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 2)
+          job1 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 2)
           subject.enqueue(job1)
           expect(subject.fetch(wait: false)).to be_nil
           Timecop.freeze(now + 1)
@@ -95,13 +95,13 @@ module AsyncJob
 
       context 'start_at time correctness' do
         it 'returns the next job if its start_at is now' do
-          job1 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now)
+          job1 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now)
           subject.enqueue(job1)
           expect(subject.fetch).to eq(job1)
         end
 
         it 'returns the next job if its start_at is in the past' do
-          job1 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now - 0.001)
+          job1 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now - 0.001)
           subject.enqueue(job1)
           expect(subject.fetch).to eq(job1)
         end
@@ -109,9 +109,9 @@ module AsyncJob
 
       context 'order correctness' do
         it 'fetches jobs in increasing start_at order' do
-          job1 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 3)
-          job2 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 1)
-          job3 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 2)
+          job1 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 3)
+          job2 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 1)
+          job3 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 2)
           subject.enqueue(job1)
           subject.enqueue(job2)
           subject.enqueue(job3)
@@ -125,9 +125,9 @@ module AsyncJob
 
     describe '#size' do
       it 'returns the size of the job store' do
-        job1 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 3)
-        job2 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 1)
-        job3 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 2)
+        job1 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 3)
+        job2 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 1)
+        job3 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 2)
         subject.enqueue(job1)
         subject.enqueue(job2)
         subject.enqueue(job3)
@@ -138,9 +138,9 @@ module AsyncJob
 
     describe '#to_a' do
       it 'returns the set of jobs as an array' do
-        job1 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 3)
-        job2 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 1)
-        job3 = AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 2)
+        job1 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 3)
+        job2 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 1)
+        job3 = Job.new(worker_class_name: 'MyWorker', args: [], start_at: Time.now + 2)
         subject.enqueue(job1)
         subject.enqueue(job2)
         subject.enqueue(job3)

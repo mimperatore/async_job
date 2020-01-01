@@ -39,16 +39,16 @@ module AsyncJob
       end
 
       def perform_async(*args)
-        AsyncJob.new(worker_class_name: name, args: args)
+        Job.new(worker_class_name: name, args: args)
       end
 
       def perform_at(at, *args)
-        AsyncJob.new(worker_class_name: name, args: args, start_at: at)
+        Job.new(worker_class_name: name, args: args, start_at: at)
       end
 
       def perform_in(in_ms, *args)
         at = Time.now + Rational(in_ms, 1000)
-        AsyncJob.new(worker_class_name: name, args: args, start_at: at)
+        Job.new(worker_class_name: name, args: args, start_at: at)
       end
     end
   end

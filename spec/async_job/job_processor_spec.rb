@@ -27,8 +27,8 @@ module AsyncJob
 
       context 'order of execution' do
         before(:each) do
-          job1 = AsyncJob.new(worker_class_name: 'MyWorker', args: nil)
-          job2 = AsyncJob.new(worker_class_name: 'MyWorker', args: nil)
+          job1 = Job.new(worker_class_name: 'MyWorker', args: nil)
+          job2 = Job.new(worker_class_name: 'MyWorker', args: nil)
           allow(jobstore).to receive(:fetch).and_return(job1, job2, nil)
           expect(job1).to receive(:perform).ordered
           expect(job2).to receive(:perform).ordered

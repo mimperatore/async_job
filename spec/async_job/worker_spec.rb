@@ -102,25 +102,25 @@ module AsyncJob
         end
 
         describe '.perform_async' do
-          it 'returns an AsyncJob for a worker with the specified arguments, that will start now' do
-            async_job = AsyncJob.new(worker_class_name: 'MyWorker', args: [1, 2, 3], start_at: Time.now)
+          it 'returns a Job for a worker with the specified arguments, that will start now' do
+            async_job = Job.new(worker_class_name: 'MyWorker', args: [1, 2, 3], start_at: Time.now)
             expect(MyWorker.perform_async(1, 2, 3)).to eq(async_job)
           end
         end
 
         describe '.perform_at' do
-          it 'returns an AsyncJob for a worker with the specified arguments, that will start at the specified time' do
+          it 'returns a Job for a worker with the specified arguments, that will start at the specified time' do
             later = Time.now + Rational(3.5, 1000)
-            async_job = AsyncJob.new(worker_class_name: 'MyWorker', args: [1, 2, 3], start_at: later)
+            async_job = Job.new(worker_class_name: 'MyWorker', args: [1, 2, 3], start_at: later)
             expect(MyWorker.perform_at(later, 1, 2, 3)).to eq(async_job)
           end
         end
 
         describe '.perform_in' do
-          it 'returns an AsyncJob for a worker with the specified arguments, '\
+          it 'returns a Job for a worker with the specified arguments, '\
             'that will start after the specified amount of time' do
             later = Time.now + Rational(3.5, 1000)
-            async_job = AsyncJob.new(worker_class_name: 'MyWorker', args: [1, 2, 3], start_at: later)
+            async_job = Job.new(worker_class_name: 'MyWorker', args: [1, 2, 3], start_at: later)
             expect(MyWorker.perform_in(3.5, 1, 2, 3)).to eq(async_job)
           end
         end

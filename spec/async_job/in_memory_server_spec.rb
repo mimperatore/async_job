@@ -14,7 +14,7 @@ module AsyncJob
     let(:num_threads) { 1 }
     let(:jobstore) { InMemoryJobStore.new }
     let(:jobs) do
-      10.times.map { |i| AsyncJob.new(worker_class_name: 'MyWorker', args: [], start_at: now + 0.01 * i) }
+      10.times.map { |i| Job.new(worker_class_name: 'MyWorker', args: [], start_at: now + 0.01 * i) }
     end
 
     subject do
