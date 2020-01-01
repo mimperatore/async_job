@@ -8,7 +8,7 @@ module AsyncJob
 
     def run(**options)
       loop do
-        async_job = @jobstore.fetch(options)
+        async_job = @jobstore.fetch(**options)
         async_job ? async_job.perform : break
       end
     end
