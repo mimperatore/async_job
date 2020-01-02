@@ -22,7 +22,7 @@ module AsyncJob
       raise NotImplementedError
     end
 
-    def to_a
+    def next_uuid
       raise NotImplementedError
     end
   end

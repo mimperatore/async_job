@@ -16,6 +16,8 @@ module AsyncJob
       a_worker
     end
 
+    let(:now) { Time.at(Time.now.to_f.round(3)) }
+
     around(:each) do |example|
       Object.const_set('MyWorker', worker_class)
       example.run
@@ -97,26 +99,31 @@ module AsyncJob
       end
 
       context 'asynchronous execution' do
-        let(:jobstore) { double('jobstore') }
+        let(:jobstore) { JobStore.new }
 
         before(:each) do
-          Timecop.freeze(Time.now)
+          Timecop.freeze(now)
           allow(MyWorker).to receive(:jobstore).and_return(jobstore)
+          allow(jobstore).to receive(:next_uuid)
         end
 
         describe '.perform_async' do
-          it 'enqueues and returns a Job for a worker with the specified arguments, that will start now' do
-            async_job = Job.new(worker_class_name: 'MyWorker', args: [1, 2, 3], start_at: Time.now)
+          it 'creates, enqueues and returns a Job for a worker with the specified arguments, that will start now' do
+            async_job = Job.new(worker_class_name: 'MyWorker', args: [1, 2, 3])
+            expect(Job).to receive(:new).with(worker_class_name: 'MyWorker', args: [1, 2, 3]).and_return(async_job)
             expect(jobstore).to receive(:enqueue).with(async_job)
             expect(MyWorker.perform_async(1, 2, 3)).to eq(async_job)
           end
         end
 
         describe '.perform_at' do
-          it 'enqueues and returns a Job for a worker with the specified arguments, '\
+          it 'creates, enqueues and returns a Job for a worker with the specified arguments, '\
             'that will start at the specified time' do
-            later = Time.now + Rational(3.5, 1000)
+            later = now + 0.003
             async_job = Job.new(worker_class_name: 'MyWorker', args: [1, 2, 3], start_at: later)
+            expect(Job).to receive(:new).with(
+              worker_class_name: 'MyWorker', args: [1, 2, 3], start_at: later
+            ).and_return(async_job)
             expect(jobstore).to receive(:enqueue).with(async_job)
             expect(MyWorker.perform_at(later, 1, 2, 3)).to eq(async_job)
           end
@@ -125,10 +132,13 @@ module AsyncJob
         describe '.perform_in' do
           it 'enqueues and returns a Job for a worker with the specified arguments, '\
             'that will start after the specified amount of time' do
-            later = Time.now + Rational(3.5, 1000)
+            later = now + 0.003
             async_job = Job.new(worker_class_name: 'MyWorker', args: [1, 2, 3], start_at: later)
+            expect(Job).to receive(:new).with(
+              worker_class_name: 'MyWorker', args: [1, 2, 3], start_at: later
+            ).and_return(async_job)
             expect(jobstore).to receive(:enqueue).with(async_job)
-            expect(MyWorker.perform_in(3.5, 1, 2, 3)).to eq(async_job)
+            expect(MyWorker.perform_in(3, 1, 2, 3)).to eq(async_job)
           end
         end
       end
