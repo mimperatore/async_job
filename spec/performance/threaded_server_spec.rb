@@ -3,7 +3,7 @@
 require 'yaml'
 
 module AsyncJob
-  RSpec.describe InMemoryServer do
+  RSpec.describe ThreadedServer do
     let(:worker_class) do
       Class.new do
         include Worker

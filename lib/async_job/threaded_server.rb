@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module AsyncJob
-  class InMemoryServer
+  class ThreadedServer
     def initialize(num_threads, jobstore)
       @num_threads = num_threads
       @jobstore = jobstore
