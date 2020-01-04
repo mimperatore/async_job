@@ -4,16 +4,26 @@ env:
   jobs:
     - TEST_SUITE="~@performance"
     - TEST_SUITE="@performance"
+
 language: ruby
+
 os: linux
+
 rvm:
   - 2.7.0
-before_install: gem install bundler -v 2.1.0
-before_script:
+
+before_install:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter before-build
+
+install:
+  - gem install bundler -v 2.1.0
+
+before_script:
+  - if [[ "$TEST_SUITE" == "~@performance" ]]; then ./cc-test-reporter before-build; fi
+
 script:
   - bundle exec rspec --tag $TEST_SUITE
+
 after_script:
-  - ./cc-test-reporter after-build -t simplecov --exit-code $TRAVIS_TEST_RESULT
+  - if [[ "$TEST_SUITE" == "~@performance" ]]; then ./cc-test-reporter after-build -t simplecov --exit-code $TRAVIS_TEST_RESULT; fi
