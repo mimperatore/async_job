@@ -18,6 +18,7 @@ before_install:
 
 install:
   - gem install bundler -v 2.1.0
+  - bundle
 
 before_script:
   - if [[ "$TEST_SUITE" == "~@performance" ]]; then ./cc-test-reporter before-build; fi
